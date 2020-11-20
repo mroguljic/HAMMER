@@ -67,6 +67,9 @@ Int_t skimmingLeadingAK8Jet(Int_t nFatJet, rvec_f FatJet_eta, rvec_f FatJet_pt, 
     if(FatJet_pt[0]<300){
         return 0;
     }
+    if(FatJet_msoftdrop[0]<30){
+        return 0;
+    }
     return 1;
 }
 
@@ -78,6 +81,9 @@ Int_t skimmingTwoAK8Jets(Int_t nFatJet, rvec_f FatJet_eta, rvec_f FatJet_pt, rve
         return 0;
     }
     if(FatJet_pt[0]<300 || FatJet_pt[1]<300){
+        return 0;
+    }
+    if(FatJet_msoftdrop[0]<30 || FatJet_msoftdrop[1]<30){
         return 0;
     }
     return 2;
