@@ -1484,7 +1484,7 @@ class Correction(object):
         elif 'TIMBER/Framework' in script: # relative path given to TIMBER module
             outname = TIMBERPATH+script
         else: # non-TIMBER module
-            outname = outname
+            outname = script
         
         if not os.path.isfile(outname):
             raise NameError('File %s does not exist'%outname)
