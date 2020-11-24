@@ -36,7 +36,7 @@ Int_t skimFlag(Int_t nFatJet, rvec_f FatJet_eta, rvec_f FatJet_pt, rvec_f FatJet
 Int_t skimFlag(Int_t nFatJet, rvec_f FatJet_eta, rvec_f FatJet_pt, rvec_f FatJet_msoftdrop,Int_t nJet, rvec_f Jet_eta, rvec_f Jet_pt, Int_t nElectron, rvec_i Electron_cutBased,Int_t nMuon, rvec_b Muon_looseId,rvec_c Muon_pfIsoId){
     Int_t jetSkim    = skimmingLeadingAK8Jet(nFatJet,FatJet_eta,FatJet_pt,FatJet_msoftdrop);
     Int_t dijetSkim  = skimmingTwoAK8Jets(nFatJet,FatJet_eta,FatJet_pt,FatJet_msoftdrop);
-    Int_t leptonSkim = skimmingIsoLepton(nJet,Jet_eta,Jet_pt,nElectron,Electron_cutBased,nMuon,Muon_looseId,Muon_pfIsoId);
+    Int_t leptonSkim = skimmingIsoLepton(nJet,Jet_eta,Jet_pt,nElectron,Electron_cutBased,nMuon,Muon_looseId,Muon_pfIsoId);//1 if ele, 2 if muon
     //Bits: 1:jetSkim, 2:dijetSkim, 4:electronSkim,8:muonSkim
     Int_t skimScore  = jetSkim+2*dijetSkim+4*leptonSkim;
     return skimScore;
@@ -88,7 +88,7 @@ Int_t skimmingLeadingAK8Jet(Int_t nFatJet, rvec_f FatJet_eta, rvec_f FatJet_pt, 
     if(nFatJet<1){
         return 0;
     }
-    else if(TMath::Abs(FatJet_eta[0])<2.5 && FatJet_pt[0]<400 && FatJet_msoftdrop[0]<30){
+    else if(TMath::Abs(FatJet_eta[0])<2.5 && FatJet_pt[0]>400 && FatJet_msoftdrop[0]>30){
         return 1;
     }
     else{

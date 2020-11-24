@@ -1484,11 +1484,11 @@ class Correction(object):
         elif 'TIMBER/Framework' in script: # relative path given to TIMBER module
             outname = TIMBERPATH+script
         else: # non-TIMBER module
-            outname = script
+            outname = outname
         
-        if not os.path.isfile(script):
-            raise NameError('File %s does not exist'%script)
-        return script
+        if not os.path.isfile(outname):
+            raise NameError('File %s does not exist'%outname)
+        return outname
 
     def __setType(self,inType):
         '''Sets the type of correction.
