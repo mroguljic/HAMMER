@@ -641,6 +641,8 @@ class analyzer(object):
                 weights['nominal']+=' '+corrname+'__nom *'
         weights['nominal'] = weights['nominal'][:-2]
 
+        if weights['nominal'] == '':  weights['nominal'] = '1'
+
         # Vary nominal weight for each correction ("weight" and "uncert")
         for corrname in correctionsToApply:
             corr = self.Corrections[corrname]
@@ -675,12 +677,11 @@ class analyzer(object):
         '''
         if node == None: node = self.ActiveNode
 
-        out = HistGroup('Templates')
-
         weight_cols = [str(cname) for cname in node.DataFrame.GetColumnNames() if 'weight__' in str(cname)]
         baseName = templateHist.GetName()
         baseTitle = templateHist.GetTitle()
         binningTuple,dimension = GetHistBinningTuple(templateHist)
+        out = HistGroup(baseName+'_templates')
 
         if isinstance(variables,str): variables = [variables]
 
@@ -1396,7 +1397,7 @@ class HistGroup(Group):
 # Correction class #
 ####################
 class Correction(object):
-    '''Correction class to handle corrections produced by C++ modules.
+    '''Class to handle corrections produced by C++ modules.
 
     Uses clang in python to parse the C++ code and determine function names, 
     namespaces, and argument names and types. 
@@ -1609,7 +1610,9 @@ class Correction(object):
                     args_to_use.append(a)
 
         else:
-            if len(inArgs) != len(self.__funcInfo[self.__mainFunc].keys()):
+            if len(inArgs) < len(self.__funcInfo[self.__mainFunc].keys()):
+                print ('Provided number of arguments (%s) does not match required (%s). Asssuming there are default arguments not specified...'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
+            elif len(inArgs) > len(self.__funcInfo[self.__mainFunc].keys()):
                 raise ValueError('Provided number of arguments (%s) does not match required (%s).'%(len(inArgs),len(self.__funcInfo[self.__mainFunc].keys())))
             args_to_use = inArgs
 
