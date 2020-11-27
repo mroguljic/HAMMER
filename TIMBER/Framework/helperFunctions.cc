@@ -65,7 +65,7 @@ Int_t skimmingIsoLepton(Int_t nJet, rvec_f Jet_eta, rvec_f Jet_pt, Int_t nElectr
     if(nJet<1){
         return 0;
     }
-    Int_t isGoodJet = TMath::Abs(Jet_eta[0])>2.5 && Jet_pt[0]>30;
+    Int_t isGoodJet = TMath::Abs(Jet_eta[0])<2.5 && Jet_pt[0]>30;
     Int_t isGoodMuon = goodMuon(nMuon,Muon_looseId,Muon_pfIsoId);
     Int_t isGoodElectron = goodElectron(nElectron,Electron_cutBased);
 
