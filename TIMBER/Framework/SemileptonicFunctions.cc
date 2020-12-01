@@ -24,43 +24,135 @@ Float_t leptonEta(rvec_f Electron_eta,rvec_f Muon_eta,Int_t lIdx,Int_t lGenerati
 std::vector<int> goodAK4JetIdxs(Int_t nJet,rvec_f Jet_pt, rvec_f Jet_eta, rvec_f Jet_phi, rvec_i Jet_jetId, Float_t phi_l, Float_t eta_l);
 Int_t probeAK8JetIdx(Int_t nFatJet,rvec_f FatJet_pt,rvec_f FatJet_msoftdrop,rvec_f FatJet_phi,rvec_f FatJet_eta, rvec_i FatJet_jetId,Float_t lPhi,Float_t lEta);
 Int_t classifyProbeJet(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother);
+Int_t bFromTopinJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother );
+Int_t bFromTopBothinJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother );
+Int_t qFromWInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother );
+Int_t qqFromWAllInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother );
+Int_t tagTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_f GenPart_pt);
+Int_t WfromTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother, rvec_f GenPart_pt);
 
-Int_t classifyProbeJet(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother){
-//1: qq, 2: bq, 3:bqq, 0 other
-    Int_t nBfromT = 0;
-    Int_t nQfromW = 0;
+Int_t WfromTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother, rvec_f GenPart_pt){
+    for(Int_t i=0; i<nGenPart;i++){
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta[fatJetIdx],FatJet_phi[fatJetIdx]);
+        Int_t pid = GenPart_pdgId[i];
+        Int_t motherIdx = GenPart_genPartIdxMother[i];
+        Int_t motherPid = GenPart_pdgId[motherIdx];
+        if(TMath::Abs(pid)==24 && TMath::Abs(motherPid)==6 && dR<0.8){
+            return GenPart_pt[i];
+        }
+    }
+    return 0;
+}
+
+Int_t tagTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_f GenPart_pt){
+    for(Int_t i=0; i<nGenPart;i++){
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta[fatJetIdx],FatJet_phi[fatJetIdx]);
+        Int_t pid = GenPart_pdgId[i];
+        if(TMath::Abs(pid)==6 && dR<0.8){
+            return GenPart_pt[i];
+        }
+    }
+    return 0;
+}
+
+Int_t bFromTopinJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother ){
     for(Int_t i=0; i<nGenPart;i++){
         Int_t pid = GenPart_pdgId[i];
         Int_t motherIdx = GenPart_genPartIdxMother[i];
         Int_t motherPid = GenPart_pdgId[motherIdx];
 
-        if(motherPid==-1){//only interested in products of decays
+        if(motherPid==-1){
             continue;
         }
 
-        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta[fatJetIdx],FatJet_phi[fatJetIdx]);
-        Float_t dRMother = deltaR(GenPart_eta[motherIdx],GenPart_phi[motherIdx],FatJet_eta[fatJetIdx],FatJet_phi[fatJetIdx]);
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta,FatJet_phi);
 
-        if(dR>0.8 || dRMother>0.8){
-            continue;
-        }
-
-        if(TMath::Abs(pid)==5 && TMath::Abs(motherPid)==6){//if b with t as mother
-            nBfromT = nBfromT+1;
-            continue;
-        }
-        else if(TMath::Abs(pid)<6 && TMath::Abs(pid)>0 && TMath::Abs(motherPid)==24){//quark with W as mother
-            nQfromW = nQfromW+1;
-            continue;
+        if(TMath::Abs(pid)==5 && TMath::Abs(motherPid)==6 && dR<0.8){
+            return 1;
         }
     }
-    if(nBfromT==1 && nQfromW ==2){
+    return 0;
+}
+
+Int_t bFromTopBothinJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother ){
+    for(Int_t i=0; i<nGenPart;i++){
+        Int_t pid = GenPart_pdgId[i];
+        Int_t motherIdx = GenPart_genPartIdxMother[i];
+        Int_t motherPid = GenPart_pdgId[motherIdx];
+
+        if(motherPid==-1){
+            continue;
+        }
+
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta,FatJet_phi);
+        Float_t dRMother = deltaR(GenPart_eta[motherIdx],GenPart_phi[motherIdx],FatJet_eta,FatJet_phi);
+
+        if(TMath::Abs(pid)==5 && TMath::Abs(motherPid)==6 && dR<0.8 && dRMother<0.8){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+Int_t qFromWInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother ){
+    for(Int_t i=0; i<nGenPart;i++){
+        Int_t pid = GenPart_pdgId[i];
+        Int_t motherIdx = GenPart_genPartIdxMother[i];
+        Int_t motherPid = GenPart_pdgId[motherIdx];
+
+        if(motherPid==-1){
+            continue;
+        }
+
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta,FatJet_phi);
+        if(dR<0.8 && TMath::Abs(pid)<6 && TMath::Abs(pid)>0 && TMath::Abs(motherPid)==24){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+Int_t qqFromWAllInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother ){
+    Int_t nQ = 0;
+    Int_t isWInJet = 0;
+    for(Int_t i=0; i<nGenPart;i++){
+        Int_t pid = GenPart_pdgId[i];
+        Int_t motherIdx = GenPart_genPartIdxMother[i];
+        Int_t motherPid = GenPart_pdgId[motherIdx];
+
+        if(motherPid==-1){
+            continue;
+        }
+
+        Float_t dR = deltaR(GenPart_eta[i],GenPart_phi[i],FatJet_eta,FatJet_phi);
+        Float_t dRMother = deltaR(GenPart_eta[motherIdx],GenPart_phi[motherIdx],FatJet_eta,FatJet_phi);
+        if(dR<0.8 && TMath::Abs(pid)<6 && TMath::Abs(pid)>0 && TMath::Abs(motherPid)==24 && dRMother<0.8){
+            nQ = nQ+1;
+            isWInJet = isWInJet+1;
+        }
+    }
+    if(nQ>1 && isWInJet>1){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+Int_t classifyProbeJet(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother){
+//1: qq, 2: bq, 3:bqq, 0 other
+Int_t btInJet = bFromTopinJet(FatJet_phi[fatJetIdx],FatJet_eta[fatJetIdx],nGenPart,GenPart_phi,GenPart_eta,GenPart_pdgId,GenPart_genPartIdxMother);
+Int_t bInJet = bFromTopBothinJet(FatJet_phi[fatJetIdx],FatJet_eta[fatJetIdx],nGenPart,GenPart_phi,GenPart_eta,GenPart_pdgId,GenPart_genPartIdxMother);
+Int_t qInJet = qFromWInJet(FatJet_phi[fatJetIdx],FatJet_eta[fatJetIdx],nGenPart,GenPart_phi,GenPart_eta,GenPart_pdgId,GenPart_genPartIdxMother);
+Int_t qqWInJet = qqFromWAllInJet(FatJet_phi[fatJetIdx],FatJet_eta[fatJetIdx],nGenPart,GenPart_phi,GenPart_eta,GenPart_pdgId,GenPart_genPartIdxMother);
+
+    if(btInJet && qqWInJet){
         return 3;
     }
-    else if(nBfromT==1 && nQfromW ==1){
+    else if(bInJet && qInJet){
         return 2;
     }
-    else if(nBfromT==0 && nQfromW ==2){
+    else if(qqWInJet){
         return 1;
     }
     else{
