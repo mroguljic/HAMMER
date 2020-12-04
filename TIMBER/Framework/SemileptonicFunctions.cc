@@ -30,6 +30,21 @@ Int_t qFromWInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f 
 Int_t qqFromWAllInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother );
 Int_t tagTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_f GenPart_pt);
 Int_t WfromTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother, rvec_f GenPart_pt);
+Float_t deltaRClosestJet(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, Float_t lep_eta, Float_t lep_phi);
+
+Float_t deltaRClosestJet(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, Float_t lep_eta, Float_t lep_phi){
+    Float_t minDR = 10.0;
+    for(Int_t i=0; i<goodJetIdxs.size();i++){
+        Float_t j_eta = Jet_eta[goodJetIdxs[i]];
+        Float_t j_phi = Jet_phi[goodJetIdxs[i]];
+        Float_t dR = deltaR(j_eta,j_phi,lep_eta,lep_phi);
+        if(dR<minDR){
+            minDR=dR;
+        }
+    }
+    return minDR;
+}
+
 
 Int_t WfromTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother, rvec_f GenPart_pt){
     for(Int_t i=0; i<nGenPart;i++){
