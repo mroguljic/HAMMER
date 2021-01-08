@@ -21,16 +21,17 @@
 using namespace ROOT::VecOps;
 using LorentzV = ROOT::Math::PtEtaPhiMVector;
 
-
-class JetUncShifter {
+//Class to handle JES uncertainty shift
+//Constructor initializes the reader
+//GetUncVal calculates the uncertainty depending on the eta and pt
+class JESUncShifter {
     public:
 
-        JetUncShifter(std::string jerUncFile_);
-        ~JetUncShifter(){};
+        JESUncShifter(std::string jesUncFile_);
+        ~JESUncShifter(){};
         float GetUncVal(float eta, float pt, int unc_shift);
 
-        std::string jerUncFile_;
-        boost::shared_ptr<JetCorrectionUncertainty> ptr_jecUnc; 
+        boost::shared_ptr<JetCorrectionUncertainty> ptr_jesUnc; 
 };
 
 
