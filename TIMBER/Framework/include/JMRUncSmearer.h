@@ -21,11 +21,11 @@ using LorentzV = ROOT::Math::PtEtaPhiMVector;
 class JMRUncSmearer {
     public:
 
-		TRandom _randGen;
+		//TRandom _randGen;
 
         JMRUncSmearer();
         ~JMRUncSmearer(){};
-        float smearMsd(float mass, float pt,float sigma,rvec_f GenJetAK8_pt, int FatJet_genJetAK8Idx);//shift 0,1,2: nominal,down,up
+        float smearMsd(float mSD, float pt,float resSF,rvec_f GenJetAK8_mass, int FatJet_genJetAK8Idx, int shift);//shift 0,1,2: down,nominal,up
 
 };
 
