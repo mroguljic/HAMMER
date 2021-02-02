@@ -24,7 +24,6 @@ int btagSFHandler::createTaggingCategories(float taggerVal){
 int btagSFHandler::updateTaggingCategories(int jetCat,float jetPt){
 	float sfT   = this->getSF(jetPt,2,this->_year);
 	float sfL   = this->getSF(jetPt,1,this->_year);
-	std::cout<<jetPt<<" "<<sfT<<"\n";
 	int cat;
 	if(sfT<1 && sfL<1){
 		//If T, check to degrade to L and check if it needs to be further degraded to fail
@@ -55,7 +54,7 @@ int btagSFHandler::updateTaggingCategories(int jetCat,float jetPt){
 			return cat;
 		}
 		else if(jetCat==1){
-			cat = this->bothLessThanOne(jetCat,sfT,sfL);
+			cat = this->bothGreaterThanOne(jetCat,sfT,sfL);
 			return cat;			
 		}
 		else{
