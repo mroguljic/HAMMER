@@ -7,18 +7,18 @@ using namespace ROOT::VecOps;
 
 /**
  * @class AK4Btag_SF
- * @brief Subjet b tagging scale factor lookup.
+ * @brief b tagging scale factor lookup.
  */
 class AK4Btag_SF {
     public:
         /**
-         * @brief Construct a new subjet b tag scale factor lookup object
+         * @brief Construct a new b tag scale factor lookup object
          * 
          * @param year 16, 17, or 18.
-         * @param tagger Ex. DeepCSV. See TIMBER/data/OfficialSFs/ for others.
-         * @param op_string "loose", "medium", "tight"
+         * @param tagger Ex. DeepCSV, DeepJet
+         * @param op_string "loose", "medium", "tight", "reshaping"
          */
-        AK4Btag_SF(int year, std::string tagger, std::string op_string);//loose, medium, tight, reshaping
+        AK4Btag_SF(int year, std::string tagger, std::string op_string);
         ~AK4Btag_SF(){};
         /**
          * @brief Per-event evaluation function
@@ -27,7 +27,7 @@ class AK4Btag_SF {
          * @param eta \f$\eta\f$ of subjet
          * @return RVec<float> Nominal, up, down scale factor values.
          */
-/*        RVec<float> eval(float pt, float eta);*/
+        RVec<float> eval(float pt, float eta);
     
     private:
         std::string csv_file;
@@ -75,7 +75,7 @@ AK4Btag_SF::AK4Btag_SF(int year, std::string tagger, std::string op_string){
 }
 
 
-/*RVec<float> AK4Btag_SF::eval(float pt, float eta) {
+RVec<float> AK4Btag_SF::eval(float pt, float eta) {
     // Note: this is for b jets, for c jets (light jets) use FLAV_C (FLAV_UDSG)
     // auto sf_lookup = [this](float eta, float pt){
     //     std::vector<float> v;
@@ -100,4 +100,4 @@ AK4Btag_SF::AK4Btag_SF(int year, std::string tagger, std::string op_string){
     jet_scalefactor[2] = down;
 
     return jet_scalefactor;
-};*/
+};
