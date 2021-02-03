@@ -27,7 +27,7 @@ class AK4Btag_SF {
          * @param eta \f$\eta\f$ of subjet
          * @return RVec<float> Nominal, up, down scale factor values.
          */
-        RVec<float> eval(float pt, float eta);
+        RVec<float> eval(float pt, float eta,int flav, float disc);
     
     private:
         std::string csv_file;
@@ -69,35 +69,26 @@ AK4Btag_SF::AK4Btag_SF(int year, std::string tagger, std::string op_string){
         std::cout<<"Created reader\n";
         reader.load(calib,                // calibration instance
                     BTagEntry::FLAV_B,    // btag flavour
-                    "comb");               // measurement type
+                    "iterativefit");               // measurement type
         std::cout<<"Loaded reader\n";
 
 }
 
 
-RVec<float> AK4Btag_SF::eval(float pt, float eta) {
-    // Note: this is for b jets, for c jets (light jets) use FLAV_C (FLAV_UDSG)
-    // auto sf_lookup = [this](float eta, float pt){
-    //     std::vector<float> v;
-
-    //     v.push_back(reader.eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt));
-    //     v.push_back(reader.eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt));
-    //     v.push_back(reader.eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt));
-
-    //     return v;
-    // };
-
-    // auto jet_scalefactor = Map(pt_vec, eta_vec, sf_lookup);
-
+RVec<float> AK4Btag_SF::eval(float pt, float eta, int flav, float disc) {
     RVec<float> jet_scalefactor(3);
 
-    float nom = reader.eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt);
-    float up = reader.eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt);
-    float down = reader.eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt);
+    BTagEntry::JetFlavor fl = static_cast<BTagEntry::JetFlavor>(flav);
+
+    float nom = reader.eval_auto_bounds("central", fl, eta, pt, disc);//eta, pt, discr
+    float up = reader.eval_auto_bounds("up", fl, eta, pt, disc);
+    float down = reader.eval_auto_bounds("down", fl, eta, pt, disc);
 
     jet_scalefactor[0] = nom;
     jet_scalefactor[1] = up;
     jet_scalefactor[2] = down;
+
+    std::cout << jet_scalefactor[0] << std::endl;
 
     return jet_scalefactor;
 };
