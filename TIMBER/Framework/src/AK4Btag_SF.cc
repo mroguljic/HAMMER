@@ -65,7 +65,7 @@ AK4Btag_SF::AK4Btag_SF(int year, std::string tagger, std::string op_string){
         std::cout<<"Created calib\n";
         reader = BTagCalibrationReader(operating_point,  // operating point
                                      "central",             // central sys type
-                                     {"up", "down"});      // other sys types
+                                     {"up_hf", "down_hf"});      // other sys types
         std::cout<<"Created reader\n";
         reader.load(calib,                // calibration instance
                     BTagEntry::FLAV_B,    // btag flavour
@@ -81,14 +81,14 @@ RVec<float> AK4Btag_SF::eval(float pt, float eta, int flav, float disc) {
     BTagEntry::JetFlavor fl = static_cast<BTagEntry::JetFlavor>(flav);
 
     float nom = reader.eval_auto_bounds("central", fl, eta, pt, disc);//eta, pt, discr
-    float up = reader.eval_auto_bounds("up", fl, eta, pt, disc);
-    float down = reader.eval_auto_bounds("down", fl, eta, pt, disc);
+    float up = reader.eval_auto_bounds("up_hf", fl, eta, pt, disc);
+    float down = reader.eval_auto_bounds("down_hf", fl, eta, pt, disc);
 
     jet_scalefactor[0] = nom;
     jet_scalefactor[1] = up;
     jet_scalefactor[2] = down;
 
-    std::cout << jet_scalefactor[0] << std::endl;
+    std::cout << nom << down << up << std::endl;
 
     return jet_scalefactor;
 };
