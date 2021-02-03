@@ -28,7 +28,7 @@ class AK4Btag_SF {
          * @return RVec<float> Nominal, up, down scale factor values.
          */
         RVec<float> eval(float pt, float eta,int flav, float disc);
-    
+        RVec<float> evalCollection(int nJet, RVec<float> pt, RVec<float> eta, RVec<float> flav, RVec<float> disc,std::string var);
     private:
         std::string csv_file;
         BTagEntry::OperatingPoint operating_point;
@@ -56,7 +56,7 @@ AK4Btag_SF::AK4Btag_SF(int year, std::string tagger, std::string op_string){
         } else if (year == 17) {
             csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepFlavour_94XSF_V4_B_F.csv";
         } else if (year == 18) {
-            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepJet_102XSF_V2";
+            csv_file = std::string(std::getenv("TIMBERPATH"))+"TIMBER/data/OfficialSFs/DeepJet_102XSF_V2.csv";
         }
 
         std::cout<<csv_file<<"\n";
@@ -88,7 +88,25 @@ RVec<float> AK4Btag_SF::eval(float pt, float eta, int flav, float disc) {
     jet_scalefactor[1] = up;
     jet_scalefactor[2] = down;
 
-    std::cout << nom << down << up << std::endl;
-
     return jet_scalefactor;
+};
+
+RVec<float> AK4Btag_SF::evalCollection(int nJet, RVec<float> pt, RVec<float> eta, RVec<float> flav, RVec<float> disc,std::string var) {
+    RVec<float> recalib_disc(nJet);
+     BTagEntry::JetFlavor fl;
+    for(int i=0; i<nJet;i++){
+        if(flav[i]==5){
+            fl = static_cast<BTagEntry::JetFlavor>(2);//b
+        }
+        else if(flav[i]==3){
+            fl = static_cast<BTagEntry::JetFlavor>(1);//c
+        }
+        else{
+            fl = static_cast<BTagEntry::JetFlavor>(0);//udsg
+        }
+        float sf = reader.eval_auto_bounds(var, fl, eta[i], pt[i], disc[i]);//var= central, up_hf, down_hf
+        recalib_disc[i] = sf*disc[i];
+    }
+
+    return recalib_disc;
 };
