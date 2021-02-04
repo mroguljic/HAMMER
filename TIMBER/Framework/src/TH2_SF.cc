@@ -31,10 +31,13 @@ RVec<float> TH2_SF::eval(float pt, float eta) {
     RVec<float> sf(3);
 
     int binx = h2->GetXaxis()->FindBin(TMath::Abs(eta));
-    int biny = h2->GetXaxis()->FindBin(TMath::Abs(pt));
-    float nom = h2->GetBinContent(binx,biny);
-    float errUp = h2->GetBinErrorUp(binx,biny);
-    float errDown = h2->GetBinErrorLow(binx,biny);
+    int biny = h2->GetYaxis()->FindBin(TMath::Abs(pt));
+    if(biny > h2->GetNbinsY()){//avoid overflow in pT
+        biny = h2->GetNbinsY();
+    }
+    float nom       = h2->GetBinContent(binx,biny);
+    float errUp     = h2->GetBinErrorUp(binx,biny);
+    float errDown   = h2->GetBinErrorLow(binx,biny);
 
     sf[0] = nom;
     sf[1] = nom-errDown;
