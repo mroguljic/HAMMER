@@ -1,4 +1,4 @@
-#include "TIMBER/Framework/include/PnetSF.h"
+#include "TIMBER/Framework/include/btagSFHandler.h"
 
 btagSFHandler::btagSFHandler(rvec_f wps,rvec_f effs,int year, int var){
 	//Only works for 2 wps!
@@ -134,27 +134,43 @@ int btagSFHandler::bothGreaterThanOne(int jetCat, float sfT, float sfL){
 }
 
 float btagSFHandler::getSF(float jetPt,int wpCat, int year){
-	//later add option for separate L/T wps
 	int ptCat;
 	int var = this->_var;
-	if(jetPt<600.0){
+	if(jetPt<400.0){
 		ptCat=0;
 	}
-	else if(jetPt<800.0){
+	else if(jetPt<500.0){
 		ptCat=1;
 	}
 	else{
 		ptCat=2;
 	}
 
-	if(year==2016){
-		return this->SF2016[var][ptCat];
+	if(wpCat==1){
+		if(year==2016){
+			return this->SF2016_L[ptCat][var];
+		}
+		else if(year==2017){
+			return this->SF2017_L[ptCat][var];
+		}
+		else{
+			return this->SF2018_L[ptCat][var];			
+		}
 	}
-	else if(year==2017){
-		return this->SF2017[var][ptCat];
+	else if(wpCat==2){
+		if(year==2016){
+			return this->SF2016_T[ptCat][var];
+		}
+		else if(year==2017){
+			return this->SF2017_T[ptCat][var];
+		}
+		else{
+			return this->SF2018_T[ptCat][var];			
+		}
 	}
 	else{
-		return this->SF2018[var][ptCat];
+		std::cout<<"Error getting SF\n";
+		return -1;
 	}
 
 }

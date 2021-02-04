@@ -13,7 +13,6 @@
 #include <TMath.h>
 
 using namespace ROOT::VecOps;
-using rvec_f =  RVec<float>;
 
 using LorentzV = ROOT::Math::PtEtaPhiMVector;
 
@@ -25,7 +24,7 @@ class JMRUncSmearer {
 
         JMRUncSmearer();
         ~JMRUncSmearer(){};
-        float smearMsd(float mSD, float pt,float resSF,rvec_f GenJetAK8_mass, int FatJet_genJetAK8Idx, int shift);//shift 0,1,2: down,nominal,up
+        float smearMsd(float mSD, float pt,float resSF,RVec<float> GenJetAK8_mass, int FatJet_genJetAK8Idx, int shift);//shift 0,1,2: down,nominal,up
 
 };
 
