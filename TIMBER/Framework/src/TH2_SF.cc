@@ -54,8 +54,8 @@ RVec<float> TH2_SF::eval(float pt, float eta){
     float errDown   = h2->GetBinErrorLow(binx,biny);
 
     sf[0] = nom;
-    sf[1] = nom-errDown;
-    sf[2] = nom+errUp;
+    sf[1] = nom+errUp;
+    sf[2] = nom-errDown;
     return sf;
 };
 
@@ -78,7 +78,7 @@ RVec<float> TH2_SF::evalComb(float pt, float eta){
     float errDown2   = h2Comb->GetBinErrorLow(binx,biny);
 
     sf[0] = nom1*relW1+nom2*relW1;
-    sf[1] = (nom1-errDown1)*relW1+(nom2-errDown2)*relW2;
-    sf[2] = (nom1+errUp1)*relW1+(nom2+errUp2)*relW2;
+    sf[1] = (nom1+errUp1)*relW1+(nom2+errUp2)*relW2;
+    sf[2] = (nom1-errDown1)*relW1+(nom2-errDown2)*relW2;
     return sf;
 };
