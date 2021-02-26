@@ -31,6 +31,23 @@ Int_t qqFromWAllInJet(Float_t FatJet_phi, Float_t FatJet_eta,Int_t nGenPart, rve
 Int_t tagTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_f GenPart_pt);
 Int_t WfromTopPt(Int_t fatJetIdx,rvec_f FatJet_phi,rvec_f FatJet_eta, Int_t nGenPart, rvec_f GenPart_phi,rvec_f GenPart_eta, rvec_i GenPart_pdgId, rvec_i GenPart_genPartIdxMother, rvec_f GenPart_pt);
 Float_t deltaRClosestJet(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, Float_t lep_eta, Float_t lep_phi);
+Int_t leptonSideJet(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_bTag, Float_t bTagCut, Float_t Jet_pt, Float_t lep_eta, Float_t lep_phi);
+
+Int_t leptonSideJetIdx(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, rvec_f Jet_bTag, Float_t bTagCut, rvec_f Jet_pt, Float_t lep_eta, Float_t lep_phi){
+    //returns idx of a leading medium b-tagged AK4 jet with pT > 50, within 1.5 deltaR from the lepton. -1 if no such jets exist
+    for(Int_t i=0; i<goodJetIdxs.size();i++){
+    Float_t j_eta = Jet_eta[goodJetIdxs[i]];
+    Float_t j_phi = Jet_phi[goodJetIdxs[i]];
+    Float_t j_pt  = Jet_pt[goodJetIdxs[i]];
+    Float_t j_btag= Jet_bTag[goodJetIdxs[i]];
+    Float_t dR = deltaR(j_eta,j_phi,lep_eta,lep_phi);
+    
+    if(dR<1.5 && j_pt>50 && j_btag>bTagCut){
+        return goodJetIdxs[i];
+        }
+    }
+    return -1;
+}
 
 Float_t deltaRClosestJet(rvec_i goodJetIdxs,rvec_f Jet_eta, rvec_f Jet_phi, Float_t lep_eta, Float_t lep_phi){
     Float_t minDR = 10.0;
