@@ -24,7 +24,7 @@ class JMRUncSmearer {
 
         JMRUncSmearer();
         ~JMRUncSmearer(){};
-        float smearMsd(float mSD, float pt,float resSF,RVec<float> GenJetAK8_mass, int FatJet_genJetAK8Idx, int shift);//shift 0,1,2: down,nominal,up
+        float smearMsd(float mSD,float resSF,RVec<float> GenJetAK8_mass, int FatJet_genJetAK8Idx, int shift);//shift 0,1,2: down,nominal,up
 
 };
 
