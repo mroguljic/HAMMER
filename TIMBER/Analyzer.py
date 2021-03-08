@@ -120,11 +120,13 @@ class analyzer(object):
  
         # Count number of generated events if not data
         self.genEventCount = 0 
+        self.genEventSumw  = 0 
         if not self.isData: 
             for i in range(RunChain.GetEntries()): 
                 RunChain.GetEntry(i)
                 if self.preV6: self.genEventCount+= RunChain.genEventCount
                 else: self.genEventCount+= RunChain.genEventCount_
+                self.genEventSumw+= RunChain.genEventSumw
 
         # Get LHAID from LHEPdfWeights branch
         self.lhaid = "-1"

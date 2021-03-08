@@ -14,6 +14,45 @@ using LVector = ROOT::Math::PtEtaPhiMVector;
 
 Int_t highHTFlag(Int_t nGenPart, rvec_i GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPart_phi, rvec_f GenPart_eta, rvec_f GenPart_mass, Int_t nGenJetAK8,rvec_f GenJetAK8_pt, rvec_f GenJetAK8_phi, rvec_f GenJetAK8_eta, rvec_f GenJetAK8_mass);
 Float_t deltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
+Float_t getMTT(Int_t nGenPart, rvec_i GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPart_phi, rvec_f GenPart_eta, rvec_f GenPart_mass);
+Float_t getPartIdx(Int_t nGenPart, rvec_i GenPart_pdgId);
+
+Float_t getPartIdx(Int_t nGenPart, rvec_i GenPart_pdgId, Int_t pdgId){
+    //returns idx of the first parton with GenPart_pdgId == pdgId, -1 otherwise
+    for(Int_t i=0;i<nGenPart;i++){
+        if(GenPart_pdgId[i]==pdgId){
+            return i;
+        }
+    }
+    return -1;    
+}
+
+Float_t getMTT(Int_t nGenPart, rvec_i GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPart_phi, rvec_f GenPart_eta, rvec_f GenPart_mass){
+    //Finds two first genParts with pdgId 6 or -6 and calculates their inv mass
+    //Assumes TTbar samples where there will be top and antitop one after the other in the particle chain
+    Int_t nTops = 0;
+    std::vector<LVector> topVecs;
+    Float_t invMass = 0.0;
+
+    for(Int_t i=0;i<nGenPart;i++){
+        if(nTops>1){
+            break;
+        }
+        if(GenPart_pdgId[i]==6 || GenPart_pdgId[i]==-6){
+            topVecs.push_back(LVector(GenPart_pt[i],GenPart_eta[i],GenPart_phi[i],GenPart_mass[i]));
+            nTops=nTops+1;
+        }
+    }
+
+    if(nTops==2){
+        invMass = (topVecs[0]+topVecs[1]).M();
+    }
+
+    return invMass;
+
+}
+
+
 
 Int_t highHTFlag(Int_t nGenPart, rvec_i GenPart_pdgId, rvec_f GenPart_pt, rvec_f GenPart_phi, rvec_f GenPart_eta, rvec_f GenPart_mass, Int_t nGenJetAK8,rvec_f GenJetAK8_pt, rvec_f GenJetAK8_phi, rvec_f GenJetAK8_eta, rvec_f GenJetAK8_mass){
     if(nGenJetAK8<1){
